@@ -25,7 +25,7 @@ duration(fs::path path)
 std::string
 format(std::uintmax_t bytes)
 {
-    return "3 Gb 2 Mb 3 Kb";
+    return human_filesize(bytes);
 }
 
 std::string
