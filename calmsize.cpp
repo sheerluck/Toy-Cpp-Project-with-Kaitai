@@ -13,7 +13,7 @@ human_filesize(std::uintmax_t size)
         return fmt::format("{size} bytes",
                             "size"_a = size);
     }
-    auto units = {"KB", "MB", "GB", "TB"};
+    auto units = {"Kb", "Mb", "Gb", "Tb"};
     auto fsize = float{size};
     auto divsr = 1024;
     auto xunit = "BUG"s;

@@ -1,14 +1,13 @@
 #include <map>
 #include <filesystem>
-#include <fmt/format.h>
 #include "utils.h"
+#include "rang.hpp"
 
 namespace fs = std::filesystem;
 using Same = std::vector<fs::directory_entry>;
 
 int main() {
     using namespace std::string_literals;
-    using namespace fmt::literals;
     const auto extension = ".mkv"s;
     auto data = std::map<std::uint16_t, Same>{};
     auto max = 1u;
@@ -30,10 +29,18 @@ int main() {
         std::sort(std::begin(vec), std::end(vec));
         for (const auto& p : vec)
         {
-            fmt::print("{mkv:} goes on '{dur}', {size}\n",
-                       "mkv"_a  = pad(p.path().filename().string(), max),
-                       "size"_a = format(fs::file_size(p)),
-                       "dur"_a  = format(key));
+            std::cout
+            << rang::fgB::blue
+            << pad(p.path().filename().string(), max)
+            << rang::fg::reset
+
+            << " goes on "
+
+            << rang::fgB::green
+            << format(key)
+            << rang::fg::reset
+
+            << ", " << format(fs::file_size(p)) << '\n';
         }
     }
 }
