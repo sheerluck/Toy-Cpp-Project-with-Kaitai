@@ -17,7 +17,8 @@ int main() {
         if (p.path().string().ends_with(extension))
         {
             auto name = p.path().filename().string();
-            if (name.length() > max) max = name.length();
+            auto cp = code_points(name);
+            if (cp > max) max = cp;
             auto key = duration(p.path());
             auto [it, ok] = data.try_emplace(key, Same{p});
             if (!ok) data[key].push_back(p);

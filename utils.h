@@ -4,6 +4,9 @@
 
 namespace fs = std::filesystem;
 
+float
+code_points(const std::string& utf8);
+
 std::uint16_t
 duration(fs::path path);
 
