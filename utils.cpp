@@ -1,8 +1,12 @@
+#include <fstream>
 #include "utils.h"
 
 std::uint16_t
-duration(fs::directory_entry path)
+duration(fs::path path)
 {
+    std::ifstream file(path);
+
+    //auto storage = blob::input_storage(file);
     return 42;
 }
 
@@ -19,7 +23,7 @@ format(std::uint16_t seconds)
 }
 
 std::string
-pad(const std::string s, int max)
+pad(const std::string& s, int max)
 {
     // "Hello", 10 -> "Hello    "
     using namespace std::string_literals;

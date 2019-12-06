@@ -1,7 +1,6 @@
+#include <map>
 #include <filesystem>
 #include <fmt/format.h>
-#include <map>
-
 #include "utils.h"
 
 namespace fs = std::filesystem;
@@ -19,7 +18,7 @@ int main() {
         {
             auto name = p.path().filename().string();
             if (name.length() > max) max = name.length();
-            auto key = duration(p);
+            auto key = duration(p.path());
             auto [it, ok] = data.try_emplace(key, Same{p});
             if (!ok) data[key].push_back(p);
         }
@@ -33,7 +32,7 @@ int main() {
             fmt::print("{mkv:} goes on '{dur}' and occupies '{size}'\n",
                        "mkv"_a  = pad(p.path().filename().string(), max),
                        "size"_a = format(fs::file_size(p)),
-                       "dur"_a  = format(duration(p)));
+                       "dur"_a  = format(key));
         }
     }
 }

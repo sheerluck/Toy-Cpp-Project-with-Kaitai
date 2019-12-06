@@ -5,7 +5,7 @@
 namespace fs = std::filesystem;
 
 std::uint16_t
-duration(fs::directory_entry path);
+duration(fs::path path);
 
 std::string
 format(std::uintmax_t bytes);
@@ -14,4 +14,4 @@ std::string
 format(std::uint16_t seconds);
 
 std::string
-pad(std::string s, int max);
+pad(const std::string& s, int max);
