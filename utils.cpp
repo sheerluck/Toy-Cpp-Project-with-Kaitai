@@ -1,5 +1,17 @@
 #include <fstream>
+#include <codecvt>
+#include <fmt/format.h>
 #include "utils.h"
+#include "calmsize.h"
+
+float
+code_points(const std::string& utf8)
+{
+    std::wstring_convert<std::codecvt_utf8_utf16<char16_t>, char16_t> utf16conv;
+    std::u16string utf16 = utf16conv.from_bytes(utf8);
+    return utf16.length();
+}
+
 
 std::uint16_t
 duration(fs::path path)
@@ -27,10 +39,10 @@ pad(const std::string& s, int max)
 {
     // "Hello", 10 -> "Hello    "
     using namespace std::string_literals;
-    auto len = s.length();
-    if (len < max) {
+    auto cp = code_points(s);
+    if (cp < max) {
         auto spaces = ""s;
-        spaces.resize(max - len, ' ');
+        spaces.resize(max - cp, ' ');
         return s + spaces;
     }
     return s;
