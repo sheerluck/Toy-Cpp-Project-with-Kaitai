@@ -30,7 +30,7 @@ int main() {
         std::sort(std::begin(vec), std::end(vec));
         for (const auto& p : vec)
         {
-            fmt::print("{mkv:} goes on '{dur}' and occupies '{size}'\n",
+            fmt::print("{mkv:} goes on '{dur}', {size}\n",
                        "mkv"_a  = pad(p.path().filename().string(), max),
                        "size"_a = format(fs::file_size(p)),
                        "dur"_a  = format(key));
