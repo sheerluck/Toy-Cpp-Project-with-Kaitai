@@ -1,0 +1,1 @@
+Добавить cxxopts.hpp в проект вместо fs::current_path()
