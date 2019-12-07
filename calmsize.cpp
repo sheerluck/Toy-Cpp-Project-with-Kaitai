@@ -30,8 +30,10 @@ human_filesize(const std::uintmax_t size)
 std::string
 human_duration(const double seconds)
 {
-    uint8_t h = (seconds)               / (60 * 60);
-    uint8_t m = (seconds - 60 * 60 * h) / (60);
-    uint8_t s = (seconds - 60 *  1 * m) / (1);
-    return fmt::sprintf("%.2d:%.2d:%.2d", h, m, s);
+    auto s = static_cast<long long>(seconds);
+    auto H = s / (60 * 60);
+    auto m = s % (60 * 60); 
+    auto M = m / 60;
+    auto S = m % 60;
+    return fmt::sprintf("%.2d:%.2d:%.2d", H, M, S);
 }
