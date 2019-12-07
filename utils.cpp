@@ -4,6 +4,9 @@
 #include "utils.h"
 #include "calmsize.h"
 
+#include <kaitai/kaitaistream.h>
+#include "generated.h"
+
 float
 code_points(const std::string& utf8)
 {
@@ -13,13 +16,31 @@ code_points(const std::string& utf8)
 }
 
 
-std::uint16_t
+double
 duration(fs::path path)
 {
-    std::ifstream file(path);
+    std::ifstream ifs(path, std::ifstream::binary);
+    kaitai::kstream ks(&ifs);
+    generated_t g = generated_t(&ks);
 
-    //auto storage = blob::input_storage(file);
-    return 42;
+    uint64_t offset = 0;
+    uint8_t a, b, c;
+    while (true)
+    {
+        a = g._io()->read_u1();
+        offset++;
+        if (0x44 != a) continue;
+        b = g._io()->read_u1();
+        offset++;
+        if (0x89 != b) continue;
+        c = g._io()->read_u1();
+        offset++;
+        if (0x88 == c) break;
+        if (0x84 == c) break;
+    }
+    g._io()->seek(offset - 3);
+    g._read();
+    return (generated_t::size_type_t::SIZE_TYPE_FLOAT == g.protocol()) ? g.value4() : g.value8();
 }
 
 std::string
@@ -29,9 +50,9 @@ format(std::uintmax_t bytes)
 }
 
 std::string
-format(std::uint16_t seconds)
+format(double milliseconds)
 {
-    return "00:00:42";
+    return human_duration(milliseconds / 1000);
 }
 
 std::string

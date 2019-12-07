@@ -3,7 +3,7 @@
 #include <fmt/printf.h>
 
 std::string
-human_filesize(std::uintmax_t size)
+human_filesize(const std::uintmax_t size)
 {
     // ported from hachoir.core.tools
     using namespace std::string_literals;
@@ -14,7 +14,7 @@ human_filesize(std::uintmax_t size)
                             "size"_a = size);
     }
     auto units = {"Kb", "Mb", "Gb", "Tb"};
-    auto fsize = float{size};
+    auto fsize = static_cast<float>(size);
     auto divsr = 1024;
     auto xunit = "BUG"s;
     for (const auto& unit : units)
@@ -25,6 +25,13 @@ human_filesize(std::uintmax_t size)
             return fmt::sprintf("%.1f %s", fsize, unit);
     }
     return fmt::sprintf("%u %s", fsize, xunit);
+}
 
-    
+std::string
+human_duration(const double seconds)
+{
+    uint8_t h = (seconds)               / (60 * 60);
+    uint8_t m = (seconds - 60 * 60 * h) / (60);
+    uint8_t s = (seconds - 60 *  1 * m) / (1);
+    return fmt::sprintf("%.2d:%.2d:%.2d", h, m, s);
 }
