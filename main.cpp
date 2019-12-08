@@ -46,14 +46,18 @@ int main (int argc, char *argv[])
     }
     if (opt_help)
     {
-        std::cout << R"HELP(
+        std::cout
+        << rang::fg::green
+        << R"HELP(
 Usage: mkv [options]
 Longest movies in color (in current directory or whatever)
 
 Options:
   -h, --help                                Displays this help.
   -p, --path "Videos/Mkv"                   Path to movies.
-)HELP";
+)HELP"
+        << rang::fg::reset
+        << '\n';
         return 0;
     }
     const auto path = fs::path{expand_user(opt_path)};
