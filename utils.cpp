@@ -29,15 +29,15 @@ duration(fs::path path)
     {
         a = g._io()->read_u1();
         offset++;
-        if (0x44 != a) continue;
+        if (0x44 not_eq a) continue;
         b = g._io()->read_u1();
-        if (0x89 != b)
+        if (0x89 not_eq b)
         {
             g._io()->seek(offset);
             continue;
         }
         c = g._io()->read_u1();
-        if (0x84 == c || 0x88 == c) break;
+        if (0x84 == c or 0x88 == c) break;
         g._io()->seek(offset);
     }
     g._io()->seek(offset - 1);
