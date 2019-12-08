@@ -62,8 +62,7 @@ pad(const std::string& s, int max)
 {
     // "Hello", 10 -> "Hello    "
     using namespace std::string_literals;
-    auto cp = code_points(s);
-    if (cp < max) {
+    if (auto cp = code_points(s); cp < max) {
         auto spaces = ""s;
         spaces.resize(max - cp, ' ');
         return s + spaces;
