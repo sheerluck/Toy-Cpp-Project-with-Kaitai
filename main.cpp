@@ -104,9 +104,22 @@ Options:
             << rang::fgB::green
             << key
             << rang::fg::reset
-            << " -- "
-            << format(fs::file_size(p))
-            << '\n';
+            << " -- ";
+
+            auto s = format(fs::file_size(p));
+            if (s.ends_with("Gb"))
+            {
+                std::cout
+                << rang::fgB::red
+                << s
+                << rang::fg::reset;
+            }
+            else
+            {
+                std::cout
+                << s;
+            }
+            std::cout << '\n';
         }
     }
 }
