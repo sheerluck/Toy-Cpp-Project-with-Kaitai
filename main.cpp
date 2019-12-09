@@ -97,6 +97,7 @@ Options:
         {
             std::cout
             << rang::fgB::blue
+            // << std::left << std::setw(max)  << name  -- no code point awareness
             << pad(p.path().filename().string(), max)
             << rang::fg::reset
             << " -- "
