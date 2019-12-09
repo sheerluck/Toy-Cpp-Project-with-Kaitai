@@ -17,7 +17,7 @@ code_points(const std::string& utf8)
 
 
 double
-duration(fs::path path)
+duration(const fs::path& path)
 {
     std::ifstream ifs(path, std::ifstream::binary);
     kaitai::kstream ks(&ifs);
