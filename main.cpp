@@ -111,12 +111,14 @@ Options:
             {
                 std::cout
                 << rang::fgB::red
+                << std::right << std::setw(9)
                 << s
                 << rang::fg::reset;
             }
             else
             {
                 std::cout
+                << std::right << std::setw(9)
                 << s;
             }
             std::cout << '\n';
