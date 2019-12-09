@@ -26,14 +26,18 @@ int main (int argc, char *argv[])
     options.add_options()
         ("h,help",           "help")
         ("p,path",           "path",
-          cxxopts::value<std::string>()->default_value(fs::current_path().string()));
+          cxxopts::value<std::string>()->default_value(fs::current_path().string()))
+        ("t,top",            "top",
+          cxxopts::value<int>()->default_value("10"));
     auto opt_help = false;
     auto opt_path = ""s;
+    auto opt_top  = 10ULL;
     try
     {
         auto opt = options.parse(argc, argv);
         opt_help = opt["help"].as<bool>();
         opt_path = opt["path"].as<std::string>();
+        opt_top  = opt["top" ].as<unsigned long long>();
     }
     catch (const cxxopts::option_not_exists_exception& e)
     {
@@ -44,6 +48,15 @@ int main (int argc, char *argv[])
         << '\n';
         return 19;
     }
+    catch (const cxxopts::option_requires_argument_exception& e)
+    {
+        std::cout
+        << rang::fgB::red
+        << e.what()
+        << rang::fg::reset
+        << '\n';
+        return 17;
+    }
     if (opt_help)
     {
         std::cout
@@ -53,8 +66,10 @@ Usage: mkv [options]
 Longest movies in color (in current directory or whatever)
 
 Options:
-  -h, --help                                Displays this help.
-  -p, --path "Videos/Mkv"                   Path to movies.
+  -h, --help                  Displays this help.
+  -p, --path "Videos/Mkv"     Path to movies.
+  -t, --top 30                Number of lines to show.
+                              Default is 10, 0 is inf.
 )HELP"
         << rang::fg::reset
         << '\n';
@@ -95,6 +110,7 @@ Options:
         std::sort(std::begin(vec), std::end(vec));
         for (const auto& p : vec)
         {
+            opt_top -= 1;
             std::cout
             << rang::fgB::blue
             // << std::left << std::setw(max)  << name  -- no code point awareness
@@ -122,6 +138,8 @@ Options:
                 << s;
             }
             std::cout << '\n';
+            if (0 == opt_top) break;
         }
+        if (0 == opt_top) break;
     }
 }
