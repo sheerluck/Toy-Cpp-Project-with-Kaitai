@@ -15,6 +15,13 @@ $ kaitai-struct-compiler-0.9-SNAPSHOT/bin/kaitai-struct-compiler     \
 $ git clone https://github.com/kaitai-io/kaitai_struct_cpp_stl_runtime
 ```
 
+```
+$ apt install git
+$ apt install cmake
+$ apt install libfmt-dev   # or https://fmt.dev/latest/usage.html#building-the-library
+
+```
+
 
 ```
 $ git clone https://github.com/sheerluck/Kaitai-for-Michael.git
