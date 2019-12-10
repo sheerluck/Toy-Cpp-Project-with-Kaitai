@@ -26,7 +26,7 @@ void say_what_again(const std::exception& e)
     << e.what()
     << rang::fg::reset
     << '\n';
-};
+}
 
 int main (int argc, char *argv[])
 {
