@@ -3,3 +3,4 @@ cmake-build-default
 cmake-build-release
 cmake-build-debug
 build
+CMakeLists.txt.user
