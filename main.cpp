@@ -19,6 +19,15 @@ std::string expand_user(std::string path)
     return path;
 }
 
+void say_what_again(const std::exception& e)
+{
+    std::cout
+    << rang::fgB::red
+    << e.what()
+    << rang::fg::reset
+    << '\n';
+};
+
 int main (int argc, char *argv[])
 {
     using namespace std::string_literals;
@@ -28,33 +37,28 @@ int main (int argc, char *argv[])
         ("p,path",           "path",
           cxxopts::value<std::string>()->default_value(fs::current_path().string()))
         ("t,top",            "top",
-          cxxopts::value<int>()->default_value("10"));
+          cxxopts::value<long long>()->default_value("10"))
+        ("f,flat",           "flat");
     auto opt_help = false;
     auto opt_path = ""s;
-    auto opt_top  = 10ULL;
+    auto opt_top  = 10LL;
+    auto opt_flat = false;
     try
     {
         auto opt = options.parse(argc, argv);
         opt_help = opt["help"].as<bool>();
         opt_path = opt["path"].as<std::string>();
-        opt_top  = opt["top" ].as<unsigned long long>();
+        opt_top  = opt["top" ].as<long long>();
+        opt_flat = opt["flat"].as<bool>();
     }
     catch (const cxxopts::option_not_exists_exception& e)
     {
-        std::cout
-        << rang::fgB::red
-        << "Unknown option"
-        << rang::fg::reset
-        << '\n';
+        say_what_again(e);
         return 19;
     }
     catch (const cxxopts::option_requires_argument_exception& e)
     {
-        std::cout
-        << rang::fgB::red
-        << e.what()
-        << rang::fg::reset
-        << '\n';
+        say_what_again(e);
         return 17;
     }
     if (opt_help)
@@ -70,6 +74,7 @@ Options:
   -p, --path "Videos/Mkv"     Path to movies.
   -t, --top 30                Number of lines to show.
                               Default is 10, 0 is inf.
+  -f, --flat                  No recursion.
 )HELP"
         << rang::fg::reset
         << '\n';
@@ -78,10 +83,10 @@ Options:
     const auto path = fs::path{expand_user(opt_path)};
     const auto extension = ".mkv"s;
     auto data = std::map<std::string, Same>{};
-    auto max = 1u;
+    auto max  = std::size_t{1};
     try
     {
-        for(const auto& p: fs::recursive_directory_iterator(path))
+        auto collect = [&] (auto p)
         {
             if (p.path().string().ends_with(extension))
             {
@@ -93,15 +98,21 @@ Options:
                 auto [it, ok] = data.try_emplace(key, Same{p});
                 if (!ok) data[key].push_back(p);
             }
+        };
+        if (opt_flat)
+        {
+            for(const auto& p: fs::directory_iterator(path))
+                collect(p);
+        }
+        else
+        {
+            for(const auto& p: fs::recursive_directory_iterator(path))
+                collect(p);
         }
     }
     catch (const fs::filesystem_error& e)
     {
-        std::cout
-        << rang::fgB::red
-        << e.what()
-        << rang::fg::reset
-        << '\n';
+        say_what_again(e);
         return 23;
     }
 

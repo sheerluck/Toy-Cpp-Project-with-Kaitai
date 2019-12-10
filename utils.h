@@ -4,7 +4,7 @@
 
 namespace fs = std::filesystem;
 
-float
+std::size_t
 code_points(const std::string& utf8);
 
 double
@@ -18,4 +18,4 @@ format(double milliseconds);
 
 
 std::string
-pad(const std::string& s, int max);
+pad(const std::string& s, std::size_t max);

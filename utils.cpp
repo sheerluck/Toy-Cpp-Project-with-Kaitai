@@ -7,7 +7,7 @@
 #include <kaitai/kaitaistream.h>
 #include "generated.h"
 
-float
+std::size_t
 code_points(const std::string& utf8)
 {
     std::wstring_convert<std::codecvt_utf8_utf16<char16_t>, char16_t> utf16conv;
@@ -58,7 +58,7 @@ format(double milliseconds)
 }
 
 std::string
-pad(const std::string& s, int max)
+pad(const std::string& s, std::size_t max)
 {
     // "Hello", 10 -> "Hello    "
     using namespace std::string_literals;
