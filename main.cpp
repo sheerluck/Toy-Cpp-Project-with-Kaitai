@@ -92,14 +92,15 @@ Options:
                 if (!ok) data[key].push_back(p);
             }
         };
+        auto options = fs::directory_options::skip_permission_denied;
         if (opt_flat)
         {
-            for(const auto& p: fs::directory_iterator(path))
+            for(const auto& p: fs::directory_iterator(path, options))
                 collect(p);
         }
         else
         {
-            for(const auto& p: fs::recursive_directory_iterator(path))
+            for(const auto& p: fs::recursive_directory_iterator(path, options))
                 collect(p);
         }
     }
