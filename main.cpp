@@ -6,14 +6,17 @@
 #include "rang.hpp"
 #include "reverse.h"
 
+using namespace std::string_literals;
 namespace fs = std::filesystem;
 using Same = std::vector<fs::directory_entry>;
 
-void say_what_again(const std::exception& e)
+void say_what_again(const std::exception& e,
+                    const std::string& info = ""s)
 {
     std::cout
     << rang::fgB::red
     << e.what()
+    << (info.empty() ? info : "\n"s + info)
     << rang::fg::reset
     << '\n';
 }
@@ -22,7 +25,6 @@ extern char **environ;
 
 int main (int argc, char *argv[])
 {
-    using namespace std::string_literals;
     print_argv(*argv, *environ);
     cxxopts::Options options("mkv", "description");
     options.add_options()
@@ -95,7 +97,7 @@ Options:
                 }
                 catch (const std::exception& e)
                 {
-                    say_what_again(e);
+                    say_what_again(e, p.path().string());
                 }
             }
         };
