@@ -21,11 +21,31 @@ void say_what_again(const std::exception& e,
     << '\n';
 }
 
+std::size_t
+get_max(const std::map<std::string, Same>& data,
+        long long copy)
+{
+    auto max = std::size_t{0};
+    for (auto& [key, vec] : reverse(data))
+    {
+        for (const auto& p : vec)
+        {
+            copy -= 1;
+            auto name = p.path().filename().string();
+            auto cp = code_points(name);
+            if (cp > max) max = cp;
+            if (0 == copy) break;
+        }
+        if (0 == copy) break;
+    }
+    return max;
+}
+
 extern char **environ;
 
 int main (int argc, char *argv[])
 {
-    print_argv(*argv, *environ);
+    //print_argv(*argv, *environ);
     cxxopts::Options options("mkv", "description");
     options.add_options()
         ("h,help",           "help")
@@ -78,16 +98,12 @@ Options:
     const auto path = fs::path{opt_path};
     const auto extension = ".mkv"s;
     auto data = std::map<std::string, Same>{};
-    auto max  = std::size_t{1};
     try
     {
         auto collect = [&] (auto p)
         {
             if (p.path().string().ends_with(extension))
             {
-                auto name = p.path().filename().string();
-                auto cp = code_points(name);
-                if (cp > max) max = cp;
                 try
                 {
                     auto milli = duration(p.path());
@@ -119,6 +135,7 @@ Options:
         return 23;
     }
 
+    auto max  = get_max(data, opt_top);
     for (auto& [key, vec] : reverse(data))
     {
         std::sort(std::begin(vec), std::end(vec));
