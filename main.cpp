@@ -9,16 +9,6 @@
 namespace fs = std::filesystem;
 using Same = std::vector<fs::directory_entry>;
 
-std::string expand_user(std::string path)
-{
-    if (not path.empty() and path[0] == '~')
-    {
-        auto home = std::getenv("HOME");
-        path.replace(0, 1, home);
-    }
-    return path;
-}
-
 void say_what_again(const std::exception& e)
 {
     std::cout
@@ -83,7 +73,7 @@ Options:
         << '\n';
         return 0;
     }
-    const auto path = fs::path{expand_user(opt_path)};
+    const auto path = fs::path{opt_path};
     const auto extension = ".mkv"s;
     auto data = std::map<std::string, Same>{};
     auto max  = std::size_t{1};
