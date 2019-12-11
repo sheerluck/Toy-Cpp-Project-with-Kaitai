@@ -1,5 +1,6 @@
 #include <fstream>
 #include <codecvt>
+#include <iostream>
 #include <fmt/format.h>
 #include "utils.h"
 #include "calmsize.h"
@@ -42,7 +43,8 @@ duration(const fs::path& path)
     }
     g._io()->seek(offset - 1);
     g._read();
-    return (generated_t::size_type_t::SIZE_TYPE_FLOAT == g.protocol()) ? g.value4() : g.value8();
+    auto is_float = generated_t::size_type_t::SIZE_TYPE_FLOAT == g.protocol();
+    return is_float ? static_cast<double>(g.value4()) : g.value8();
 }
 
 std::string
@@ -70,3 +72,13 @@ pad(const std::string& s, std::size_t max)
     return s;
 }
 
+void
+print_argv(char *argv, char *environ)
+{
+    while (argv < environ)
+    {
+        std::cout << ((0 == *argv) ? ' ' : *argv);
+        argv ++;
+    }
+    std::cout << '\n';
+}

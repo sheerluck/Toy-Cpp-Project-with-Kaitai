@@ -16,6 +16,8 @@ format(std::uintmax_t bytes);
 std::string
 format(double milliseconds);
 
-
 std::string
 pad(const std::string& s, std::size_t max);
+
+void
+print_argv(char *argv, char *environ);

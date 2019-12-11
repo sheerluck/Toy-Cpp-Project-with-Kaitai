@@ -28,9 +28,12 @@ void say_what_again(const std::exception& e)
     << '\n';
 }
 
+extern char **environ;
+
 int main (int argc, char *argv[])
 {
     using namespace std::string_literals;
+    print_argv(*argv, *environ);
     cxxopts::Options options("mkv", "description");
     options.add_options()
         ("h,help",           "help")
