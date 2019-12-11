@@ -86,10 +86,17 @@ Options:
                 auto name = p.path().filename().string();
                 auto cp = code_points(name);
                 if (cp > max) max = cp;
-                auto milli = duration(p.path());
-                auto key = format(milli);
-                auto [it, ok] = data.try_emplace(key, Same{p});
-                if (!ok) data[key].push_back(p);
+                try
+                {
+                    auto milli = duration(p.path());
+                    auto key = format(milli);
+                    auto [it, ok] = data.try_emplace(key, Same{p});
+                    if (!ok) data[key].push_back(p);
+                }
+                catch (const std::exception& e)
+                {
+                    say_what_again(e);
+                }
             }
         };
         auto options = fs::directory_options::skip_permission_denied;
