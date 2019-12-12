@@ -6,9 +6,7 @@
 #include "calmsize.h"
 
 #include <kaitai/kaitaistream.h>
-#include "ksy/avi.h"
-#include "ksy/mkv.h"
-#include "ksy/mp4.h"
+#include "ksy_helper.h"
 
 std::size_t
 code_points(const std::string& utf8)
@@ -26,39 +24,11 @@ duration(const fs::path& path, ext ftype)
     kaitai::kstream ks(&ifs);
     switch(ftype)
     {
-        case ext::mkv:
-            break;
-        case ext::mp4:
-            break;
-        case ext::avi:
-            break;
-        default:
-            throw std::runtime_error("y u do dis to me");
+        case ext::unknown:    throw std::runtime_error("y u do dis to me");
+        case ext::avi: return avi_duration(&ks);
+        case ext::mkv: return mkv_duration(&ks);
+        case ext::mp4: return mp4_duration(&ks);
     }
-
-    generated_t g = generated_t(&ks);
-
-    uint64_t offset = 0;
-    uint8_t a, b, c;
-    while (true)
-    {
-        a = g._io()->read_u1();
-        offset++;
-        if (0x44 not_eq a) continue;
-        b = g._io()->read_u1();
-        if (0x89 not_eq b)
-        {
-            g._io()->seek(offset);
-            continue;
-        }
-        c = g._io()->read_u1();
-        if (0x84 == c or 0x88 == c) break;
-        g._io()->seek(offset);
-    }
-    g._io()->seek(offset - 1);
-    g._read();
-    auto is_float = generated_t::size_type_t::SIZE_TYPE_FLOAT == g.protocol();
-    return is_float ? static_cast<double>(g.value4()) : g.value8();
 }
 
 std::string
@@ -112,9 +82,9 @@ encode_extension(const fs::path& path)
     std::memcpy(&code, tail.data(), tail.size());
     switch (code)
     {
+        case 0x6976612e: return {true, ext::avi};
         case 0x766b6d2e: return {true, ext::mkv};
         case 0x34706d2e: return {true, ext::mp4};
-        case 0x6976612e: return {true, ext::avi};
     }
     return {false, ext::unknown};
 }
