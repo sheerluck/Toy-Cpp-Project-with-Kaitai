@@ -18,10 +18,22 @@ code_points(const std::string& utf8)
 
 
 double
-duration(const fs::path& path)
+duration(const fs::path& path, ext ftype)
 {
     std::ifstream ifs(path, std::ifstream::binary);
     kaitai::kstream ks(&ifs);
+    switch(ftype)
+    {
+        case ext::mkv:
+            break;
+        case ext::mp4:
+            break;
+        case ext::avi:
+            break;
+        default:
+            throw std::runtime_error("y u do dis to me");
+    }
+
     generated_t g = generated_t(&ks);
 
     uint64_t offset = 0;
@@ -82,3 +94,26 @@ print_argv(char *argv, char *environ)
     }
     std::cout << '\n';
 }
+
+std::pair<bool, ext>
+encode_extension(const fs::path& path)
+{
+    auto code = uint32_t{};
+    auto tail = std::array<unsigned char, 4>{};
+    auto name = path.filename().string();
+    if (name.length() < tail.size())
+        return {false, ext::unknown};
+    std::transform(std::end(name) - tail.size(),
+                   std::end(name),
+                   std::begin(tail),
+                   [](unsigned char c){ return std::tolower(c);});
+    std::memcpy(&code, tail.data(), tail.size());
+    switch (code)
+    {
+        case 0x766b6d2e: return {true, ext::mkv};
+        case 0x34706d2e: return {true, ext::mp4};
+        case 0x6976612e: return {true, ext::avi};
+    }
+    return {false, ext::unknown};
+}
+

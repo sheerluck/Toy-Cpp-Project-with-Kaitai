@@ -8,7 +8,7 @@
 
 using namespace std::string_literals;
 namespace fs = std::filesystem;
-using Same = std::vector<fs::directory_entry>;
+using Same = std::vector<fs::path>;
 
 void say_what_again(const std::exception& e,
                     const std::string& info = ""s)
@@ -31,7 +31,7 @@ get_max(const std::map<std::string, Same>& data,
         for (const auto& p : vec)
         {
             copy -= 1;
-            auto name = p.path().filename().string();
+            auto name = p.filename().string();
             auto cp = code_points(name);
             if (cp > max) max = cp;
             if (0 == copy) break;
@@ -102,18 +102,18 @@ Options:
     {
         auto collect = [&] (auto p)
         {
-            if (p.path().string().ends_with(extension))
+            if (const auto [ok, code] = encode_extension(p); ok)
             {
                 try
                 {
-                    auto milli = duration(p.path());
+                    auto milli = duration(p, code);
                     auto key = format(milli);
                     auto [it, ok] = data.try_emplace(key, Same{p});
                     if (!ok) data[key].push_back(p);
                 }
                 catch (const std::exception& e)
                 {
-                    say_what_again(e, p.path().string());
+                    say_what_again(e, p.string());
                 }
             }
         };
@@ -121,12 +121,12 @@ Options:
         if (opt_flat)
         {
             for(const auto& p: fs::directory_iterator(path, options))
-                collect(p);
+                collect(p.path());
         }
         else
         {
             for(const auto& p: fs::recursive_directory_iterator(path, options))
-                collect(p);
+                collect(p.path());
         }
     }
     catch (const fs::filesystem_error& e)
@@ -145,7 +145,7 @@ Options:
             std::cout
             << rang::fgB::blue
             // << std::left << std::setw(max)  << name  -- no code point awareness
-            << pad(p.path().filename().string(), max)
+            << pad(p.filename().string(), max)
             << rang::fg::reset
             << " -- "
             << rang::fgB::green
