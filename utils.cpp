@@ -6,7 +6,9 @@
 #include "calmsize.h"
 
 #include <kaitai/kaitaistream.h>
-#include "generated.h"
+#include "ksy/avi.h"
+#include "ksy/mkv.h"
+#include "ksy/mp4.h"
 
 std::size_t
 code_points(const std::string& utf8)

@@ -96,11 +96,10 @@ Options:
         return 0;
     }
     const auto path = fs::path{opt_path};
-    const auto extension = ".mkv"s;
     auto data = std::map<std::string, Same>{};
     try
     {
-        auto collect = [&] (auto p)
+        auto collect = [&data] (auto p)
         {
             if (const auto [ok, code] = encode_extension(p); ok)
             {

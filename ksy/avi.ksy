@@ -1,5 +1,5 @@
 meta:
-  id: generated
+  id: avi
   endian: be
   license: WTF
   ks-version: 0.9
