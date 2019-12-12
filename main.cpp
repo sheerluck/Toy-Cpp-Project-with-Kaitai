@@ -54,9 +54,6 @@ int main (int argc, char *argv[])
         ("t,top",            "top",
           cxxopts::value<long long>()->default_value("10"))
         ("f,flat",           "flat");
-    auto opt_path = ""s;
-    auto opt_top  = 10LL;
-    auto opt_flat = false;
     try
     {
         auto opt = options.parse(argc, argv);
@@ -75,24 +72,8 @@ int main (int argc, char *argv[])
             << rang::fg::reset << "\n\n";
             return 0;
         }
-        opt_path = opt["path"].as<std::string>();
-        opt_top  = opt["top" ].as<long long>();
-        opt_flat = opt["flat"].as<bool>();
-    }
-    catch (const cxxopts::option_not_exists_exception& e)
-    {
-        say_what_again(e);
-        return 19;
-    }
-    catch (const cxxopts::option_requires_argument_exception& e)
-    {
-        say_what_again(e);
-        return 17;
-    }
-    const auto path = fs::path{opt_path};
-    auto data = std::map<std::string, Same>{};
-    try
-    {
+        const auto path = fs::path{opt["path"].as<std::string>()};
+        auto data = std::map<std::string, Same>{};
         auto collect = [&data] (const fs::path& p)
         {
             if (const auto [ok, code] = encode_extension(p); ok)
@@ -111,7 +92,7 @@ int main (int argc, char *argv[])
             }
         };
         auto options = fs::directory_options::skip_permission_denied;
-        if (opt_flat)
+        if (opt["flat"].as<bool>())
         {
             for(const auto& p: fs::directory_iterator(path, options))
                 collect(p.path());
@@ -121,49 +102,62 @@ int main (int argc, char *argv[])
             for(const auto& p: fs::recursive_directory_iterator(path, options))
                 collect(p.path());
         }
+
+        auto top = opt["top" ].as<long long>();
+        auto max = get_max(data, top);
+        for (auto& [key, vec] : reverse(data))
+        {
+            std::sort(std::begin(vec), std::end(vec));
+            for (const auto& p : vec)
+            {
+                top -= 1;
+                std::cout
+                << rang::fgB::blue
+                // << std::left << std::setw(max)  << name  -- no code point awareness
+                << pad(p.filename().string(), max)
+                << rang::fg::reset
+                << " -- "
+                << rang::fgB::green
+                << key
+                << rang::fg::reset
+                << " -- ";
+
+                auto s = format(fs::file_size(p));
+                if (s.ends_with("Gb"))
+                {
+                    std::cout
+                    << rang::fgB::red
+                    << std::right << std::setw(9)
+                    << s
+                    << rang::fg::reset;
+                }
+                else
+                {
+                    std::cout
+                    << std::right << std::setw(9)
+                    << s;
+                }
+                std::cout << '\n';
+                if (0 == top) break;
+            }
+            if (0 == top) break;
+        }
+
     }
-    catch (const fs::filesystem_error& e)
+    catch (const cxxopts::option_not_exists_exception& e)
+    {
+        say_what_again(e);
+        return 19;
+    }
+    catch (const cxxopts::option_requires_argument_exception& e)
     {
         say_what_again(e);
         return 23;
     }
-
-    auto max  = get_max(data, opt_top);
-    for (auto& [key, vec] : reverse(data))
+    catch (const fs::filesystem_error& e)
     {
-        std::sort(std::begin(vec), std::end(vec));
-        for (const auto& p : vec)
-        {
-            opt_top -= 1;
-            std::cout
-            << rang::fgB::blue
-            // << std::left << std::setw(max)  << name  -- no code point awareness
-            << pad(p.filename().string(), max)
-            << rang::fg::reset
-            << " -- "
-            << rang::fgB::green
-            << key
-            << rang::fg::reset
-            << " -- ";
-
-            auto s = format(fs::file_size(p));
-            if (s.ends_with("Gb"))
-            {
-                std::cout
-                << rang::fgB::red
-                << std::right << std::setw(9)
-                << s
-                << rang::fg::reset;
-            }
-            else
-            {
-                std::cout
-                << std::right << std::setw(9)
-                << s;
-            }
-            std::cout << '\n';
-            if (0 == opt_top) break;
-        }
-        if (0 == opt_top) break;
+        say_what_again(e);
+        return 29;
     }
+
 }
