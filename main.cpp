@@ -54,14 +54,27 @@ int main (int argc, char *argv[])
         ("t,top",            "top",
           cxxopts::value<long long>()->default_value("10"))
         ("f,flat",           "flat");
-    auto opt_help = false;
     auto opt_path = ""s;
     auto opt_top  = 10LL;
     auto opt_flat = false;
     try
     {
         auto opt = options.parse(argc, argv);
-        opt_help = opt["help"].as<bool>();
+        if (opt["help"].as<bool>())
+        {
+            std::cout << rang::fg::green << strip_margin(R"HELP(
+            |Usage: mkv [options]
+            |Longest movies in color (in current directory or whatever)
+            |
+            |Options:
+            |  -h, --help                  Displays this help.
+            |  -p, --path "Videos/Mkv"     Path to movies.
+            |  -t, --top 30                Number of lines to show.
+            |                              Default is 10, 0 is inf.
+            |  -f, --flat                  No recursion.)HELP")
+            << rang::fg::reset << "\n\n";
+            return 0;
+        }
         opt_path = opt["path"].as<std::string>();
         opt_top  = opt["top" ].as<long long>();
         opt_flat = opt["flat"].as<bool>();
@@ -75,25 +88,6 @@ int main (int argc, char *argv[])
     {
         say_what_again(e);
         return 17;
-    }
-    if (opt_help)
-    {
-        std::cout
-        << rang::fg::green
-        << R"HELP(
-Usage: mkv [options]
-Longest movies in color (in current directory or whatever)
-
-Options:
-  -h, --help                  Displays this help.
-  -p, --path "Videos/Mkv"     Path to movies.
-  -t, --top 30                Number of lines to show.
-                              Default is 10, 0 is inf.
-  -f, --flat                  No recursion.
-)HELP"
-        << rang::fg::reset
-        << '\n';
-        return 0;
     }
     const auto path = fs::path{opt_path};
     auto data = std::map<std::string, Same>{};

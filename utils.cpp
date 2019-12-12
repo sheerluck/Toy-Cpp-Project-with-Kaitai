@@ -1,6 +1,7 @@
 #include <fstream>
 #include <codecvt>
 #include <iostream>
+#include <regex>
 #include <fmt/format.h>
 #include "utils.h"
 #include "calmsize.h"
@@ -26,6 +27,7 @@ duration(const fs::path& path, ext ftype)
         case ext::mkv: return mkv_duration(&ks) / 1000;
         case ext::mp4: return mp4_duration(&ks);
     }
+    return 3.1415926;
 }
 
 std::string
@@ -86,3 +88,9 @@ encode_extension(const fs::path& path)
     return {false, ext::unknown};
 }
 
+std::string
+strip_margin(const std::string &s)
+{
+    auto r = std::regex{R"(\n([ ]*)\|)"};
+    return   std::regex_replace(s, r, "\n");
+}

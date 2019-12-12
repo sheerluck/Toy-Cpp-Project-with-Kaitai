@@ -32,3 +32,6 @@ print_argv(char *argv, char *environ);
 
 std::pair<bool, ext>
 encode_extension(const fs::path& path);
+
+std::string
+strip_margin(const std::string &s);
