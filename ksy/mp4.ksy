@@ -7,19 +7,17 @@ meta:
 seq:
 
   - id: magic
-    contents: [0x44, 0x89]
-  - id: protocol
+    contents: [0x6d, 0x76, 0x68, 0x64]
+  - id: version
     type: u1
-    enum: size_type
-  - id: value4
-    type: f4
-    if: protocol == size_type::float
-  - id: value8
-    type: f8
-    if: protocol == size_type::double
-
-enums:
-  size_type:
-    0x84: float
-    0x88: double
+  - id: flags
+    size: 3
+  - id: ctime
+    type: u4
+  - id: mtime
+    type: u4
+  - id: scale
+    type: u4
+  - id: duration
+    type: u4
 

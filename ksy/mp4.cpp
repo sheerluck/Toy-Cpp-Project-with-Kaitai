@@ -11,26 +11,17 @@ mp4_t::mp4_t(kaitai::kstream* p__io, kaitai::kstruct* p__parent, mp4_t* p__root)
 }
 
 void mp4_t::_read() {
-    m_magic = m__io->read_bytes(2);
-    if (!(magic() == std::string("\x44\x89", 2))) {
-        throw kaitai::validation_not_equal_error<std::string>(std::string("\x44\x89", 2), magic(), _io(), std::string("/seq/0"));
+    m_magic = m__io->read_bytes(4);
+    if (!(magic() == std::string("\x6D\x76\x68\x64", 4))) {
+        throw kaitai::validation_not_equal_error<std::string>(std::string("\x6D\x76\x68\x64", 4), magic(), _io(), std::string("/seq/0"));
     }
-    m_protocol = static_cast<mp4_t::size_type_t>(m__io->read_u1());
-    n_value4 = true;
-    if (protocol() == mp4_t::SIZE_TYPE_FLOAT) {
-        n_value4 = false;
-        m_value4 = m__io->read_f4be();
-    }
-    n_value8 = true;
-    if (protocol() == mp4_t::SIZE_TYPE_DOUBLE) {
-        n_value8 = false;
-        m_value8 = m__io->read_f8be();
-    }
+    m_version = m__io->read_u1();
+    m_flags = m__io->read_bytes(3);
+    m_ctime = m__io->read_u4be();
+    m_mtime = m__io->read_u4be();
+    m_scale = m__io->read_u4be();
+    m_duration = m__io->read_u4be();
 }
 
 mp4_t::~mp4_t() {
-    if (!n_value4) {
-    }
-    if (!n_value8) {
-    }
 }

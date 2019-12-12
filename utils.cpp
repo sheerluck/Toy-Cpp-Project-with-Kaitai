@@ -4,8 +4,6 @@
 #include <fmt/format.h>
 #include "utils.h"
 #include "calmsize.h"
-
-#include <kaitai/kaitaistream.h>
 #include "ksy_helper.h"
 
 std::size_t
@@ -16,7 +14,6 @@ code_points(const std::string& utf8)
     return utf16.length();
 }
 
-
 double
 duration(const fs::path& path, ext ftype)
 {
@@ -26,7 +23,7 @@ duration(const fs::path& path, ext ftype)
     {
         case ext::unknown:    throw std::runtime_error("y u do dis to me");
         case ext::avi: return avi_duration(&ks);
-        case ext::mkv: return mkv_duration(&ks);
+        case ext::mkv: return mkv_duration(&ks) / 1000;
         case ext::mp4: return mp4_duration(&ks);
     }
 }
@@ -38,9 +35,9 @@ format(std::uintmax_t bytes)
 }
 
 std::string
-format(double milliseconds)
+format(double seconds)
 {
-    return human_duration(milliseconds / 1000);
+    return human_duration(seconds);
 }
 
 std::string

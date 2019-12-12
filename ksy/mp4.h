@@ -15,40 +15,29 @@ class mp4_t : public kaitai::kstruct {
 
 public:
 
-    enum size_type_t {
-        SIZE_TYPE_FLOAT = 132,
-        SIZE_TYPE_DOUBLE = 136
-    };
-
     mp4_t(kaitai::kstream* p__io, kaitai::kstruct* p__parent = nullptr, mp4_t* p__root = nullptr);
     void _read();
     ~mp4_t();
 
 private:
     std::string m_magic;
-    size_type_t m_protocol;
-    float m_value4;
-    bool n_value4;
-
-public:
-    bool _is_null_value4() { value4(); return n_value4; };
-
-private:
-    double m_value8;
-    bool n_value8;
-
-public:
-    bool _is_null_value8() { value8(); return n_value8; };
-
-private:
+    uint8_t m_version;
+    std::string m_flags;
+    uint32_t m_ctime;
+    uint32_t m_mtime;
+    uint32_t m_scale;
+    uint32_t m_duration;
     mp4_t* m__root;
     kaitai::kstruct* m__parent;
 
 public:
     std::string magic() const { return m_magic; }
-    size_type_t protocol() const { return m_protocol; }
-    float value4() const { return m_value4; }
-    double value8() const { return m_value8; }
+    uint8_t version() const { return m_version; }
+    std::string flags() const { return m_flags; }
+    uint32_t ctime() const { return m_ctime; }
+    uint32_t mtime() const { return m_mtime; }
+    uint32_t scale() const { return m_scale; }
+    uint32_t duration() const { return m_duration; }
     mp4_t* _root() const { return m__root; }
     kaitai::kstruct* _parent() const { return m__parent; }
 };

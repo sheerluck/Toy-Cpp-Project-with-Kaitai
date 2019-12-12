@@ -22,7 +22,7 @@ std::string
 format(std::uintmax_t bytes);
 
 std::string
-format(double milliseconds);
+format(double seconds);
 
 std::string
 pad(const std::string& s, std::size_t max);

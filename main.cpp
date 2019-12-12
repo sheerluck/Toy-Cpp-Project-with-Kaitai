@@ -99,7 +99,7 @@ Options:
     auto data = std::map<std::string, Same>{};
     try
     {
-        auto collect = [&data] (auto p)
+        auto collect = [&data] (const fs::path& p)
         {
             if (const auto [ok, code] = encode_extension(p); ok)
             {
