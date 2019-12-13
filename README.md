@@ -1,5 +1,7 @@
 # Kaitai-for-Michael
 
+![Image](<https://i.imgur.com/NYpxwwX.png>)
+
 ```
 $ kaitai-struct-compiler-0.9-SNAPSHOT/bin/kaitai-struct-compiler \
   --target cpp_stl --cpp-standard 11 --ksc-exceptions            \

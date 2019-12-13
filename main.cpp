@@ -61,14 +61,14 @@ int main (int argc, char *argv[])
         {
             std::cout << rang::fg::green << strip_margin(R"HELP(
             |Usage: mkv [options]
-            |Longest movies in color (in current directory or whatever)
+            |Longest movies (in current directory)
             |
             |Options:
-            |  -h, --help                  Displays this help.
-            |  -p, --path "Videos/Mkv"     Path to movies.
-            |  -t, --top 30                Number of lines to show.
-            |                              Default is 10, 0 is inf.
-            |  -f, --flat                  No recursion.)HELP")
+            |  -h, --help            Displays this help.
+            |  -p, --path Videos     Path to movies.
+            |  -t, --top 30          Number of lines to show.
+            |                        Default is 10, 0 is inf.
+            |  -f, --flat            No recursion.)HELP")
             << rang::fg::reset << "\n\n";
             return 0;
         }
@@ -106,6 +106,7 @@ int main (int argc, char *argv[])
 
         auto top = opt["top" ].as<long long>();
         auto max = get_max(data, top);
+        std::cout << "\n\n";
         for (auto& [key, vec] : reverse(data))
         {
             std::sort(std::begin(vec), std::end(vec));
@@ -113,6 +114,7 @@ int main (int argc, char *argv[])
             {
                 top -= 1;
                 std::cout
+                << "    "
                 << rang::fgB::blue
                 // << std::left << std::setw(max)  << name  -- no code point awareness
                 << pad(p.filename().string(), max)
@@ -143,7 +145,7 @@ int main (int argc, char *argv[])
             }
             if (0 == top) break;
         }
-
+        std::cout << "\n\n";
     }
     catch (const cxxopts::option_not_exists_exception& e)
     {
