@@ -32,38 +32,45 @@ mkv_duration(kaitai::kstream* pks)
 }
 
 uint64_t
-find_moov(kaitai::kstream* pks)
+inner_loop(uint32_t tag,
+           kaitai::kstream* pks,
+           uint64_t offset)
 {
-    constexpr auto moov = 0x6d6f6f76;
-    uint64_t offset = 0;
-    uint64_t prev   = 0;
-    mp4_atom_t o = mp4_atom_t(pks);
-    do
-    {
-        o._read();
-        prev = offset;
-        offset += o.size();
-        o._io()->seek(offset);
-    } while (moov not_eq o.type());
-    return prev;
-}
-
-uint64_t
-find_mvhd(kaitai::kstream* pks, uint64_t start)
-{
-    constexpr auto mvhd = 0x6d766864;
-    uint64_t offset = start + 4 + 4;  // size + type
-    uint64_t prev   = 0;
+    uint64_t prev = 0;
     mp4_atom_t o = mp4_atom_t(pks);
     o._io()->seek(offset);
     do
     {
         o._read();
         prev = offset;
-        offset += o.size();
-        o._io()->seek(offset);
-    } while (mvhd not_eq o.type());
+        if (1 == o.size()) // size cannot fit in uint32_t
+        {
+            offset += 8;
+            o._io()->seek(offset);
+            offset += o._io()->read_u8be() - 8;
+            o._io()->seek(offset);
+        }
+        else               // size can    fit in uint32_t
+        {
+            offset += o.size();
+            o._io()->seek(offset);
+        }
+    } while (tag not_eq o.type());
     return prev;
+}
+
+uint64_t
+find_moov(kaitai::kstream* pks)
+{
+    constexpr auto moov = 0x6d6f6f76;
+    return inner_loop(moov, pks, 0);
+}
+
+uint64_t
+find_mvhd(kaitai::kstream* pks, uint64_t start)
+{
+    constexpr auto mvhd = 0x6d766864;
+    return inner_loop(mvhd, pks, start + 8);
 }
 
 bool
