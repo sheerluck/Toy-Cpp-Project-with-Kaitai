@@ -66,10 +66,25 @@ find_mvhd(kaitai::kstream* pks, uint64_t start)
     return prev;
 }
 
+bool
+is_mpeg2(kaitai::kstream* pks)
+{
+    mp4_atom_t o = mp4_atom_t(pks);
+    for (const auto& attempt : {0,1,2,3,4})
+    {
+        auto offset = static_cast<uint64_t>(188 * attempt);
+        o._io()->seek(offset);
+        o._read();
+        const auto sync = o.size() >> 3 * 8;
+        if (0x47 not_eq sync) return false;
+    }
+    return true;
+}
 
 double
-mp4_duration(kaitai::kstream* pks)
+mp4_duration(kaitai::kstream* pks, bool maybe_mpeg2)
 {
+    if (maybe_mpeg2 and is_mpeg2(pks)) return 400271.0; // 111:11:11
     auto offset = find_mvhd(pks, find_moov(pks));
     mp4_t o = mp4_t(pks);
     o._io()->seek(offset + 4);

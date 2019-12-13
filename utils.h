@@ -19,10 +19,13 @@ double
 duration(const fs::path& path, ext ftype);
 
 std::string
-format(std::uintmax_t bytes);
+format(const std::uintmax_t bytes);
 
 std::string
-format(double seconds);
+format(const double seconds);
+
+std::string
+format(const fs::path& path);
 
 std::string
 pad(const std::string& s, std::size_t max);

@@ -25,22 +25,32 @@ duration(const fs::path& path, ext ftype)
         case ext::unknown:    throw std::runtime_error("y u do dis to me");
         case ext::webm:
         case ext::mkv:  return mkv_duration(&ks) / 1000;
-        case ext::mp4:  return mp4_duration(&ks);
+        case ext::mp4:  return mp4_duration(&ks, 0 == fs::file_size(path) % 188);
     }
     return 3.1415926;
 }
 
 std::string
-format(std::uintmax_t bytes)
+format(const std::uintmax_t bytes)
 {
     return human_filesize(bytes);
 }
 
 std::string
-format(double seconds)
+format(const double seconds)
 {
     return human_duration(seconds);
 }
+
+std::string
+format(const fs::path& path)
+{
+    const auto s = fs::file_size(path);
+    const auto divsr = 1024.0;
+    const auto seconds = s / divsr / divsr;
+    return human_duration(10 * seconds);
+}
+
 
 std::string
 pad(const std::string& s, std::size_t max)
