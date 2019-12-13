@@ -1,6 +1,5 @@
 #include "ksy_helper.h"
 
-#include "ksy/avi.h"
 #include "ksy/mkv.h"
 #include "ksy/mp4.h"
 #include "ksy/mp4_atom.h"
