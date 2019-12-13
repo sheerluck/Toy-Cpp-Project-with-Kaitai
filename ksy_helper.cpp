@@ -74,8 +74,7 @@ is_mpeg2(kaitai::kstream* pks)
     {
         auto offset = static_cast<uint64_t>(188 * attempt);
         o._io()->seek(offset);
-        o._read();
-        const auto sync = o.size() >> 3 * 8;
+        const auto sync = o._io()->read_u1();
         if (0x47 not_eq sync) return false;
     }
     return true;
