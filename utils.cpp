@@ -23,9 +23,9 @@ duration(const fs::path& path, ext ftype)
     switch(ftype)
     {
         case ext::unknown:    throw std::runtime_error("y u do dis to me");
-        case ext::avi: return avi_duration(&ks);
-        case ext::mkv: return mkv_duration(&ks) / 1000;
-        case ext::mp4: return mp4_duration(&ks);
+        case ext::webm:
+        case ext::mkv:  return mkv_duration(&ks) / 1000;
+        case ext::mp4:  return mp4_duration(&ks);
     }
     return 3.1415926;
 }
@@ -79,9 +79,9 @@ encode_extension(const fs::path& path)
                    std::begin(tail),
                    [](unsigned char c){ return std::tolower(c);});
     std::memcpy(&code, tail.data(), tail.size());
-    switch (code)
+    switch (code) // hex(int.from_bytes(b"webm", byteorder="little", signed=False))
     {
-        case 0x6976612e: return {true, ext::avi};
+        case 0x6d626577: return {true, ext::webm};
         case 0x766b6d2e: return {true, ext::mkv};
         case 0x34706d2e: return {true, ext::mp4};
     }

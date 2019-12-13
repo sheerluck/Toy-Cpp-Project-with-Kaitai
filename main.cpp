@@ -76,13 +76,13 @@ int main (int argc, char *argv[])
         auto data = std::map<std::string, Same>{};
         auto collect = [&data] (const fs::path& p)
         {
-            if (const auto [ok, code] = encode_extension(p); ok)
+            if (const auto [fit, code] = encode_extension(p); fit)
             {
                 try
                 {
-                    auto milli = duration(p, code);
-                    auto key = format(milli);
-                    auto [it, ok] = data.try_emplace(key, Same{p});
+                    const auto milli = duration(p, code);
+                    const auto key = format(milli);
+                    const auto [it, ok] = data.try_emplace(key, Same{p});
                     if (!ok) data[key].push_back(p);
                 }
                 catch (const std::exception& e)
@@ -91,15 +91,15 @@ int main (int argc, char *argv[])
                 }
             }
         };
-        auto options = fs::directory_options::skip_permission_denied;
+        auto doptions = fs::directory_options::skip_permission_denied;
         if (opt["flat"].as<bool>())
         {
-            for(const auto& p: fs::directory_iterator(path, options))
+            for(const auto& p: fs::directory_iterator(path, doptions))
                 collect(p.path());
         }
         else
         {
-            for(const auto& p: fs::recursive_directory_iterator(path, options))
+            for(const auto& p: fs::recursive_directory_iterator(path, doptions))
                 collect(p.path());
         }
 

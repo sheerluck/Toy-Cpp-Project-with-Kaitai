@@ -7,9 +7,9 @@ namespace fs = std::filesystem;
 enum class ext: unsigned
 {
     unknown = 0,
-    avi = 0x10,
-    mkv = 0x20,
-    mp4 = 0x30,
+    webm = 0x10,
+    mkv  = 0x20,
+    mp4  = 0x30,
 };
 
 std::size_t

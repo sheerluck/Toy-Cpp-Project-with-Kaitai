@@ -6,12 +6,6 @@
 #include "ksy/mp4_atom.h"
 
 double
-avi_duration(kaitai::kstream* pks)
-{
-    return 111111;
-}
-
-double
 mkv_duration(kaitai::kstream* pks)
 {
     mkv_t o = mkv_t(pks);
