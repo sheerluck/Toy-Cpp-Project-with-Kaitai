@@ -1,4 +1,4 @@
-# Kaitai-for-Michael
+# Toy Cpp Project with Kaitai
 
 ![Image](<https://i.imgur.com/NYpxwwX.png>)
 
@@ -26,8 +26,8 @@ $ apt install libfmt-dev   # or https://fmt.dev/latest/usage.html#building-the-l
 
 
 ```
-$ git clone https://github.com/sheerluck/Kaitai-for-Michael.git
-$ cd Kaitai-for-Michael
+$ git clone https://github.com/sheerluck/Toy-Cpp-Project-with-Kaitai.git
+$ cd Toy-Cpp-Project-with-Kaitai
 $ mkdir build
 $ cd build
 $ cmake .. -DCMAKE_BUILD_TYPE=Release
