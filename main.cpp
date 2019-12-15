@@ -96,12 +96,12 @@ int main (int argc, char *argv[])
         if (opt["flat"].as<bool>())
         {
             for(const auto& p: fs::directory_iterator(path, doptions))
-                collect(p.path());
+                if (fs::is_regular_file(p)) collect(p.path());
         }
         else
         {
             for(const auto& p: fs::recursive_directory_iterator(path, doptions))
-                collect(p.path());
+                if (fs::is_regular_file(p)) collect(p.path());
         }
 
         auto top = opt["top" ].as<long long>();
