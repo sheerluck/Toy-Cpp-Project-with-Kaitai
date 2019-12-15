@@ -34,9 +34,8 @@ get_max(const std::map<std::string, Same>& data,
             auto name = p.filename().string();
             auto cp = code_points(name);
             if (cp > max) max = cp;
-            if (0 == copy) break;
+            if (0 == copy) return max;
         }
-        if (0 == copy) break;
     }
     return max;
 }
