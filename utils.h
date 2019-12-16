@@ -25,9 +25,6 @@ std::string
 format(const double seconds);
 
 std::string
-format(const fs::path& path);
-
-std::string
 pad(const std::string& s, std::size_t max);
 
 void

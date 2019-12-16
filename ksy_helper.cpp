@@ -88,9 +88,15 @@ is_mpeg2(kaitai::kstream* pks)
 }
 
 double
-mp4_duration(kaitai::kstream* pks, bool maybe_mpeg2)
+mp4_duration(kaitai::kstream* pks, uintmax_t fsize)
 {
-    if (maybe_mpeg2 and is_mpeg2(pks)) return 400271.0; // 111:11:11
+    bool maybe_mpeg2 = 0 == fsize % 188;
+    if (maybe_mpeg2 and is_mpeg2(pks))
+    {
+        const auto divsr = 1024.0;
+        const auto seconds = fsize / divsr / divsr;
+        return 10 * seconds;
+    }
     auto offset = find_mvhd(pks, find_moov(pks));
     mp4_t o = mp4_t(pks);
     o._io()->seek(offset + 4);

@@ -6,4 +6,5 @@ double
 mkv_duration(kaitai::kstream* pks);
 
 double
-mp4_duration(kaitai::kstream* pks, bool maybe_mpeg2);
+mp4_duration(kaitai::kstream* pks, uintmax_t fsize);
+

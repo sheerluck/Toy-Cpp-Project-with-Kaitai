@@ -80,8 +80,7 @@ int main (int argc, char *argv[])
                 try
                 {
                     const auto milli = duration(p, code);
-                    auto key = format(milli);
-                    if (key.starts_with("111")) key = format(p);
+                    const auto key = format(milli);
                     const auto [it, ok] = data.try_emplace(key, Same{p});
                     if (!ok) data[key].push_back(p);
                 }
