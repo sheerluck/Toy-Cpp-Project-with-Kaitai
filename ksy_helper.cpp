@@ -48,13 +48,12 @@ inner_loop(uint32_t tag,
             offset += 8;
             o._io()->seek(offset);
             offset += o._io()->read_u8be() - 8;
-            o._io()->seek(offset);
         }
         else               // size can    fit in uint32_t
         {
             offset += o.size();
-            o._io()->seek(offset);
         }
+        o._io()->seek(offset);
     } while (tag not_eq o.type());
     return prev;
 }
@@ -101,5 +100,5 @@ mp4_duration(kaitai::kstream* pks, uintmax_t fsize)
     mp4_t o = mp4_t(pks);
     o._io()->seek(offset + 4);
     o._read();
-    return o.duration() / o.scale();
+    return static_cast<double>(o.duration()) / o.scale();
 }
