@@ -30,7 +30,7 @@ human_filesize(const std::uintmax_t size)
 std::string
 human_duration(const double seconds)
 {
-    auto s = static_cast<long long>(seconds);
+    auto s = std::llround(seconds);
     auto H = s / (60 * 60);
     auto m = s % (60 * 60); 
     auto M = m / 60;

@@ -73,7 +73,7 @@ int main (int argc, char *argv[])
         }
         const auto path = fs::path{opt["path"].as<std::string>()};
         auto data = std::map<std::string, Same>{};
-        auto collect = [&data] (const fs::path& p)
+        const auto collect = [&data] (const fs::path& p)
         {
             if (const auto [fit, code] = encode_extension(p); fit)
             {
@@ -145,20 +145,9 @@ int main (int argc, char *argv[])
         }
         std::cout << "\n\n";
     }
-    catch (const cxxopts::option_not_exists_exception& e)
+    catch (const std::exception& e)
     {
         say_what_again(e);
         return 19;
     }
-    catch (const cxxopts::option_requires_argument_exception& e)
-    {
-        say_what_again(e);
-        return 23;
-    }
-    catch (const fs::filesystem_error& e)
-    {
-        say_what_again(e);
-        return 29;
-    }
-
 }
