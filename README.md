@@ -18,9 +18,10 @@ $ git clone https://github.com/kaitai-io/kaitai_struct_cpp_stl_runtime
 ```
 
 ```
-$ apt install git
-$ apt install cmake
-$ apt install libfmt-dev   # or https://fmt.dev/latest/usage.html#building-the-library
+# apt install build-essential
+# apt install git
+# apt install cmake
+# apt install libfmt-dev   # or https://fmt.dev/latest/usage.html#building-the-library
 
 ```
 
