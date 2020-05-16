@@ -31,7 +31,14 @@ $ git clone https://github.com/sheerluck/Toy-Cpp-Project-with-Kaitai.git
 $ cd Toy-Cpp-Project-with-Kaitai
 $ mkdir build
 $ cd build
-$ cmake .. -DCMAKE_BUILD_TYPE=Release
+$ cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
 $ make -j9
 $ ./mkv --path ~/Videos
+$ clang-tidy -checks=*,-fuchsia-default-arguments-declarations,
+                       -fuchsia-default-arguments-calls,
+                       -readability-braces-around-statements,
+                       -hicpp-braces-around-statements,
+                       -google-readability-braces-around-statements,
+                       -modernize-use-trailing-return-type
+                       -p ./ ../main.cpp 
 ```

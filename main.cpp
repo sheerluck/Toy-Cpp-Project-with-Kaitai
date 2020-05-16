@@ -23,10 +23,10 @@ void say_what_again(const std::exception& e,
 
 std::size_t
 get_max(const std::map<std::string, Same>& data,
-        long long copy)
+        std::uint64_t copy)
 {
     auto max = std::size_t{0};
-    for (auto& [key, vec] : reverse(data))
+    for (const auto& [key, vec] : reverse(data))
     {
         for (const auto& p : vec)
         {
@@ -40,7 +40,7 @@ get_max(const std::map<std::string, Same>& data,
     return max;
 }
 
-extern char **environ;
+//extern char **environ;
 
 int main (int argc, char *argv[])
 {
@@ -51,7 +51,7 @@ int main (int argc, char *argv[])
         ("p,path",           "path",
           cxxopts::value<std::string>()->default_value(fs::current_path().string()))
         ("t,top",            "top",
-          cxxopts::value<long long>()->default_value("10"))
+          cxxopts::value<std::uint64_t>()->default_value("10"))
         ("f,flat",           "flat");
     try
     {
@@ -102,7 +102,7 @@ int main (int argc, char *argv[])
                 if (fs::is_regular_file(p)) collect(p.path());
         }
 
-        auto top = opt["top" ].as<long long>();
+        auto top = opt["top" ].as<std::uint64_t>();
         auto max = get_max(data, top);
         std::cout << "\n\n";
         for (auto& [key, vec] : reverse(data))
