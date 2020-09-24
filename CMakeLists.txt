@@ -16,6 +16,7 @@ include_directories(.)
 add_executable(mkv main.cpp
         utils.h utils.cpp
         calmsize.h calmsize.cpp
+        universal_iterator.h universal_iterator.cpp
 
         ksy_helper.h ksy_helper.cpp
         ksy/mkv.h ksy/mkv.cpp

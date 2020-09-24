@@ -1,8 +1,8 @@
 #pragma once
 
+#include <map>
 #include <filesystem>
-
-namespace fs = std::filesystem;
+#include <vector>
 
 enum class ext: unsigned
 {
@@ -11,6 +11,45 @@ enum class ext: unsigned
     mkv  = 0x20,
     mp4  = 0x30,
 };
+
+struct config
+{
+    std::string path = ".";
+    std::uint64_t top = 10;
+    bool help = false;
+    bool flat = false;
+};
+
+namespace fs = std::filesystem;
+using pair = std::tuple<ext, fs::path>;
+using Same = std::vector<fs::path>;
+using Map = std::map<std::string, Same>;
+using namespace std::string_literals;
+
+void
+say_what_again(const std::exception& e,
+               const std::string& info = ""s);
+
+config
+parse_options(int argc, char *argv[]);
+
+std::vector<pair>
+search(const std::string& path,
+       bool flag);
+
+Map
+process(const std::vector<pair>& names);
+
+void
+print_sorted_top(Map& m,
+                 const std::uint64_t atop);
+
+int
+print_help();
+
+std::size_t
+get_max(const Map& m,
+        const std::uint64_t copy);
 
 std::size_t
 code_points(const std::string& utf8);

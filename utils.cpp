@@ -2,10 +2,202 @@
 #include <codecvt>
 #include <iostream>
 #include <regex>
+#include <forward_list>
+#include <algorithm>
+#include <cxxopts.hpp>
 #include <fmt/format.h>
 #include "utils.h"
+#include "reverse.h"
+#include "universal_iterator.h"
+#include "rang.hpp"
 #include "calmsize.h"
 #include "ksy_helper.h"
+
+void
+say_what_again(const std::exception& e,
+               const std::string& info)
+{
+    std::cout
+    << rang::fgB::red
+    << e.what()
+    << (info.empty() ? info : "\n"s + info)
+    << rang::fg::reset
+    << '\n';
+}
+
+config
+parse_options(int argc, char *argv[])
+{
+    cxxopts::Options options("mkv", "description");
+    auto result = config{};
+    options.add_options()
+        ("h,help",           "help")
+        ("p,path",           "path",
+          cxxopts::value<std::string>()->default_value(fs::current_path().string()))
+        ("t,top",            "top",
+          cxxopts::value<std::uint64_t>()->default_value("10"))
+        ("f,flat",           "flat");
+    auto opt = options.parse(argc, argv);
+    if (opt["help"].as<bool>())
+    {
+        result.help = true;
+    }
+    else
+    {
+        result.path = opt["path"].as<std::string>();
+        result.flat = opt["flat"].as<bool>();
+        result.top  = opt["top" ].as<std::uint64_t>();
+    }
+    return result;
+}
+
+std::vector<pair>
+search(const std::string& path,
+       bool flag)
+{
+    auto fist = std::forward_list<pair>{};
+    auto size = std::uint64_t{0};
+    for(const auto& p: universal_iterator(path, flag))
+        if (fs::is_regular_file(p))
+            if (const auto [fit, code] = encode_extension(p); fit)
+            {
+                fist.push_front({code, p.path()});
+                ++size;
+            }
+    auto result = std::vector<pair>{};
+    result.reserve(size);
+    std::generate_n(std::back_inserter(result),
+                    size,
+                    [iter = std::begin(fist)]() mutable
+                    {return std::move(*iter++); });
+    return result;
+}
+
+std::map<std::string, Same>
+process(const std::vector<pair>& names)
+{
+    auto data = std::map<std::string, Same>{};
+    for (const auto& [code, p] : names)
+    {
+        try
+        {
+            const auto milli = duration(p, code);
+            const auto key = format(milli);
+            const auto [it, ok] = data.try_emplace(key, Same{p});
+            if (!ok) data[key].push_back(p);
+        }
+        catch (const std::exception& e)
+        {
+            say_what_again(e, p.string());
+        }
+
+    }
+    return data;
+}
+
+void
+padded_filename(const auto p,
+                const auto time,
+                const auto max)
+{
+    std::cout
+        << "    "
+        << rang::fgB::blue
+        // << std::left << std::setw(max)  << name  -- no code point awareness
+        << pad(p.filename().string(), max)
+        << rang::fg::reset
+        << " -- "
+        << rang::fgB::green
+        << time
+        << rang::fg::reset
+        << " -- ";
+}
+
+void
+padded_filesize(const auto p)
+{
+    auto s = format(fs::file_size(p));
+    if (s.ends_with("Gb"))
+    {
+        std::cout
+        << rang::fgB::red
+        << std::right << std::setw(9)
+        << s
+        << rang::fg::reset;
+    }
+    else
+    {
+        std::cout
+        << std::right << std::setw(9)
+        << s;
+    }
+}
+
+
+void
+print_sorted_top(Map& m,
+                 const std::uint64_t atop)
+{
+    auto cur = atop;
+    const auto max = get_max(m, atop);
+    std::cout << "\n\n";
+    for (auto& [time, vec] : reverse(m))
+    {
+        std::sort(std::begin(vec), std::end(vec));
+        for (const auto& p : vec)
+        {
+            cur -= 1;
+            padded_filename(p, time, max);
+            padded_filesize(p);
+            std::cout << '\n';
+            if (0 == cur) break;
+        }
+        if (0 == cur) break;
+    }
+    std::cout << "\n\n";
+
+}
+
+int
+print_help()
+{
+    std::cout << rang::fg::green
+              << strip_margin(R"HELP(
+              |Usage: mkv [options]
+              |Longest movies (in current directory)
+              |
+              |Options:
+              |  -h, --help            Displays this help.
+              |  -p, --path Videos     Path to movies.
+              |  -t, --top 30          Number of lines to show.
+              |                        Default is 10, 0 is inf.
+              |  -f, --flat            No recursion.)HELP")
+              << rang::fg::reset
+              << "\n\n";
+    return 0;
+}
+
+
+std::size_t
+get_max(const Map& m,
+        const std::uint64_t copy)
+{
+    auto max = std::size_t{0};
+    auto cur = std::size_t{copy};
+    for (const auto& [key, vec] : reverse(m))
+    {
+        for (const auto& p : vec)
+        {
+            cur -= 1;
+            auto name = p.filename().string();
+            auto cp = code_points(name);
+            if (cp > max) max = cp;
+            if (0 == cur) return max;
+        }
+    }
+    return max;
+
+}
 
 std::size_t
 code_points(const std::string& utf8)
@@ -30,6 +222,7 @@ duration(const fs::path& path, ext ftype)
     return 3.1415926;
 }
 
+
 std::string
 format(const std::uintmax_t bytes)
 {
@@ -53,17 +246,6 @@ pad(const std::string& s, std::size_t max)
         return s + spaces;
     }
     return s;
-}
-
-void
-print_argv(char *argv, char *environ)
-{
-    while (argv < environ)
-    {
-        std::cout << ((0 == *argv) ? ' ' : *argv);
-        argv ++;
-    }
-    std::cout << '\n';
 }
 
 std::pair<bool, ext>
