@@ -73,10 +73,10 @@ search(const std::string& path,
     return result;
 }
 
-std::map<std::string, Same>
+Map
 process(const std::vector<pair>& names)
 {
-    auto data = std::map<std::string, Same>{};
+    auto data = Map{};
     for (const auto& [code, p] : names)
     {
         try
@@ -239,7 +239,6 @@ std::string
 pad(const std::string& s, std::size_t max)
 {
     // "Hello", 10 -> "Hello    "
-    using namespace std::string_literals;
     if (auto cp = code_points(s); cp < max) {
         auto spaces = ""s;
         spaces.resize(max - cp, ' ');
