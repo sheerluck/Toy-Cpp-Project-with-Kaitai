@@ -4,14 +4,16 @@
 #include <regex>
 #include <forward_list>
 #include <algorithm>
+#include <ranges>
 #include <cxxopts.hpp>
 #include <fmt/format.h>
 #include "utils.h"
-#include "reverse.h"
 #include "universal_iterator.h"
 #include "rang.hpp"
 #include "calmsize.h"
 #include "ksy_helper.h"
+
+namespace views = std::ranges::views;
 
 void
 say_what_again(const std::exception& e,
@@ -141,7 +143,7 @@ print_sorted_top(Map& m,
     auto cur = atop;
     const auto max = get_max(m, atop);
     std::cout << "\n\n";
-    for (auto& [time, vec] : reverse(m))
+    for (auto& [time, vec] : views::reverse(m))
     {
         std::sort(std::begin(vec), std::end(vec));
         for (const auto& p : vec)
@@ -184,7 +186,7 @@ get_max(const Map& m,
 {
     auto max = std::size_t{0};
     auto cur = std::size_t{copy};
-    for (const auto& [key, vec] : reverse(m))
+    for (const auto& [key, vec] : views::reverse(m))
     {
         for (const auto& p : vec)
         {
