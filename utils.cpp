@@ -63,7 +63,7 @@ search(const std::string& path,
         if (fs::is_regular_file(p))
             if (const auto [fit, code] = encode_extension(p); fit)
             {
-                fist.push_front({code, p.path()});
+                fist.emplace_front(code, p.path());
                 ++size;
             }
     auto result = std::vector<pair>{};
